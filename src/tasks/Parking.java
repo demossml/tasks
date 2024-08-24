@@ -1,44 +1,35 @@
 package tasks;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Parking {
     private int capacity;
-    private String[] parkedCars;
-    private int[] parkingTime;
+    private Set<String> parkedCars;
+    private Map<String, Integer> parkingTime;
 
-    public Parking(int capacity, String[] parkedCars, int[] parkingTime) {
+    public Parking(int capacity, Set<String> parkedCars, Map<String, Integer> parkingTime) {
         this.capacity = capacity;
-        this.parkedCars = new String[capacity];
-        this.parkingTime = new int[capacity];
-
-        for (int i = 0; i < Math.min(capacity, parkedCars.length); i++) {
-            this.parkedCars[i] = parkedCars[i];
-            this.parkingTime[i] = parkingTime[i];
-        }
+        this.parkedCars = new HashSet<>();
+        this.parkingTime = new HashMap<>();
     }
+
     // Метод для парковки машины
     public boolean park(String carId, int hour) {
-        for (int i = 0; i < capacity; i++) {
-            if (parkedCars[i] == null) {
-                parkedCars[i] = carId;
-                parkingTime[i] = hour;
-                System.out.printf("Машина idCar:%s припаркована!\n", carId);
-                return true;
+        if (parkedCars.size() < capacity){
+            parkedCars.add(carId);
+            parkingTime.put(carId, hour);
+            System.out.printf("\"Машина idCar:%s припаркована!\n", carId);
+            return true;
             }
-
-        }
-        System.out.println( "Парковка переполнена!");
+        System.out.println("Парковка переполнена!");
         return false;
-    }
+        }
 
     public int finish_parking(String carId, int hour) {
-        for (int i = 0; i < capacity; i++) {
-            if (carId.equals(parkedCars[i])){
-                int startParkingHour = parkingTime[i];
-                int totalSum = 0;
-
-                for (int h = startParkingHour; h < hour; h++){
+        if (parkedCars.contains(carId)) {
+            int startHour = parkingTime.get(carId);
+            int totalSum = 0;
+            for (int h = startHour; h < hour; h++){
                     int dayOfWeek = (h / 24) % 7;
                     boolean isWeekend = dayOfWeek == 5 || dayOfWeek == 6;
 
@@ -50,18 +41,14 @@ public class Parking {
                     totalSum += rate;
 
                 }
-                parkedCars[i] = null;
-                parkingTime[i] = 0;
+            parkedCars.remove(carId);
+            parkingTime.remove(carId);
+            System.out.printf("Машина с ID %s убрана из парковки. Общая сумма за парковку: %d\n", carId, totalSum);
+            return totalSum;
 
-                System.out.printf("Машина с ID %s убрана из парковки. Общая сумма за парковку: %d\n", carId, totalSum);
-
-                return totalSum;
-            }
-
-
+            // Получаем время въезда машины на парковку
         }
         System.out.printf("Машина с ID %s не найдена в парковке.\n", carId);
-
         return 0;
     }
 
@@ -69,11 +56,11 @@ public class Parking {
         return capacity;
     }
 
-    public String[] getParkedCars() {
+    public Set<String> getParkedCars() {
         return parkedCars;
     }
 
-    public int[] getParkingTime() {
+    public Map<String, Integer> getParkingTime() {
         return parkingTime;
     }
 
@@ -81,8 +68,8 @@ public class Parking {
     public String toString() {
         return "Parking{" +
                 "capacity=" + capacity +
-                ", parkedCars=" + Arrays.toString(parkedCars) +
-                ", parkingTime=" + Arrays.toString(parkingTime) +
+                ", parkedCars=" + parkedCars +
+                ", parkingTime=" + parkingTime +
                 '}';
     }
 }
