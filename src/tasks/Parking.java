@@ -6,24 +6,21 @@ public class Parking {
     private static final int NIGHT_RATE = 30;  // Ставка за ночь
     private static final int DAY_RATE = 50;    // Ставка за день
     private int capacity;
-    private Set<String> parkedCars;
-    private Map<String, Integer> parkingTime;
+    private Map<String, Integer> parkingTime = new HashMap<>();
 
-    public Parking(int capacity, Set<String> parkedCars, Map<String, Integer> parkingTime) {
+    public Parking(int capacity) {
         this.capacity = capacity;
-        this.parkedCars = parkedCars;
-        this.parkingTime = parkingTime;
+
     }
 
     // Метод для парковки машины
     public boolean park(String carId, int hour) {
         try {
-            if (parkedCars.contains(carId)) {
+            if (parkingTime.containsKey(carId)) {
                 throw new CarIsAlreadyParkedException(String.format("Машина с id: %s уже припаркована! ", carId));
             }
 
-            if (parkedCars.size() < capacity) {
-                parkedCars.add(carId);
+            if (parkingTime.size() < capacity) {
                 parkingTime.put(carId, hour);
                 System.out.printf("Машина с id:%s припаркована!\n", carId);
                 return true;
@@ -32,14 +29,14 @@ public class Parking {
                 return false;
             }
         } catch (CarIsAlreadyParkedException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
             return false;
         }
     }
 
     public int unpark(String carId, int hour) {
         try {
-            if (!parkedCars.contains(carId)) {
+            if (!parkingTime.containsKey(carId)) {
                 throw new CarNotFoundException(String.format("Машина с ID %s не найдена в парковке.\n", carId));
             }
             int startHour = parkingTime.get(carId);
@@ -56,7 +53,7 @@ public class Parking {
                     totalSum += rate;
 
                 }
-            parkedCars.remove(carId);
+//            parkedCars.remove(carId);
             parkingTime.remove(carId);
             System.out.printf("Машина с ID %s убрана из парковки. Общая сумма за парковку: %d\n", carId, totalSum);
             return totalSum;
@@ -69,12 +66,10 @@ public class Parking {
     }
 
 
-
     @Override
     public String toString() {
         return "Parking{" +
                 "capacity=" + capacity +
-                ", parkedCars=" + parkedCars +
                 ", parkingTime=" + parkingTime +
                 '}';
     }
