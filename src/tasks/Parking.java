@@ -6,7 +6,7 @@ public class Parking {
     private static final int NIGHT_RATE = 30;  // Ставка за ночь
     private static final int DAY_RATE = 50;    // Ставка за день
     private int capacity; //Вместимость парковки
-    private Map<String, Integer> parkingTime = new HashMap<>();
+    private Map<String, Integer> parkingTime = new HashMap<>(capacity);
 
     public Parking(int capacity) {
         this.capacity = capacity;

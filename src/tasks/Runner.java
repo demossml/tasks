@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Runner {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CarNotFoundException, CarIsAlreadyParkedException {
 
         int capacity = 4;
 
